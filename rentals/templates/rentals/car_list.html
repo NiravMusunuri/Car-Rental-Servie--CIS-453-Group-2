@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Rental Service</title>
+</head>
+<body>
+
+<h1>Available Cars</h1>
+
+<form method="GET">
+
+    <label for="category">Category:</label>
+    <select name="category" id="category">
+        <option value="">All Categories</option>
+
+        {% for category in categories %}
+            <option value="{{ category.id }}"
+                {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="transmission">Transmission:</label>
+    <select name="transmission" id="transmission">
+        <option value="">All Transmissions</option>
+        <option value="Automatic"
+            {% if selected_transmission == "Automatic" %}selected{% endif %}>
+            Automatic
+        </option>
+        <option value="Manual"
+            {% if selected_transmission == "Manual" %}selected{% endif %}>
+            Manual
+        </option>
+    </select>
+
+    <button type="submit">Search</button>
+
+    <a href="{% url 'car_list' %}">Clear Filters</a>
+
+</form>
+
+<hr>
+
+{% for car in cars %}
+    <div>
+        <h2>{{ car.year }} {{ car.make }} {{ car.model }}</h2>
+
+        <p>Category: {{ car.category.name }}</p>
+        <p>Seats: {{ car.seats }}</p>
+        <p>Transmission: {{ car.transmission }}</p>
+        <p>Status: {{ car.get_status_display }}</p>
+        <p>Daily Rate: ${{ car.category.daily_rate }}</p>
+       <p>
+          <a href="{% url 'book_car' car.id %}">Book This Car</a>
+       </p>
+        <hr>
+    </div>
+
+{% empty %}
+    <p>No cars match your search.</p>
+{% endfor %}
+
+</body>
+</html>
