@@ -1,0 +1,8 @@
+{% extends 'rentals/base.html' %}{% block content %}
+<a class="back-link" href="{% url 'car_list' %}">← Back to the fleet</a>
+<section class="detail-layout">
+  <div class="detail-photo">{% include 'rentals/car_image.html' %}<p>Representative vehicle imagery</p></div>
+  <div class="detail-info"><p class="eyebrow">{{ car.category }} · {{ car.year }}</p><h1>{{ car.make }} {{ car.model }}</h1><p class="price"><span class="currency">$</span>{{ car.category.daily_rate }}<span class="price-unit"> / day</span></p>
+  <dl><dt>Seats</dt><dd>{{ car.seats }}</dd><dt>Transmission</dt><dd>{{ car.transmission }}</dd><dt>Availability</dt><dd>{{ car.get_status_display }}</dd></dl><p class="muted">Choose your dates to check availability. Your rental is priced by the day, excluding the return day.</p>
+  {% if car.status == 'available' %}<a class="button" href="{% url 'book_car' car.id %}">Choose rental dates <span aria-hidden="true">→</span></a>{% else %}<p class="message">This car cannot currently be reserved.</p><a href="{% url 'car_list' %}">Find another car →</a>{% endif %}</div>
+</section>{% endblock %}
