@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: nhs-car-rental
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python start.py
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: WAITRESS_TRUSTED_PROXY
+        value: "*"
+      - key: DJANGO_DATA_DIR
+        value: /var/data
+    disk:
+      name: rental-data
+      mountPath: /var/data
+      sizeGB: 1
