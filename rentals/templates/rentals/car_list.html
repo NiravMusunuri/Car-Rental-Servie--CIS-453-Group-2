@@ -1,65 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Car Rental Service</title>
-</head>
-<body>
-
-<h1>Available Cars</h1>
-
-<form method="GET">
-
-    <label for="category">Category:</label>
-    <select name="category" id="category">
-        <option value="">All Categories</option>
-
-        {% for category in categories %}
-            <option value="{{ category.id }}"
-                {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
-                {{ category.name }}
-            </option>
-        {% endfor %}
-    </select>
-
-    <label for="transmission">Transmission:</label>
-    <select name="transmission" id="transmission">
-        <option value="">All Transmissions</option>
-        <option value="Automatic"
-            {% if selected_transmission == "Automatic" %}selected{% endif %}>
-            Automatic
-        </option>
-        <option value="Manual"
-            {% if selected_transmission == "Manual" %}selected{% endif %}>
-            Manual
-        </option>
-    </select>
-
-    <button type="submit">Search</button>
-
-    <a href="{% url 'car_list' %}">Clear Filters</a>
-
-</form>
-
-<hr>
-
-{% for car in cars %}
-    <div>
-        <h2>{{ car.year }} {{ car.make }} {{ car.model }}</h2>
-
-        <p>Category: {{ car.category.name }}</p>
-        <p>Seats: {{ car.seats }}</p>
-        <p>Transmission: {{ car.transmission }}</p>
-        <p>Status: {{ car.get_status_display }}</p>
-        <p>Daily Rate: ${{ car.category.daily_rate }}</p>
-       <p>
-          <a href="{% url 'book_car' car.id %}">Book This Car</a>
-       </p>
-        <hr>
-    </div>
-
-{% empty %}
-    <p>No cars match your search.</p>
-{% endfor %}
-
-</body>
-</html>
+{% extends 'rentals/base.html' %}{% block content %}
+<section class="hero"><div><p class="eyebrow">NHS CAR RENTAL SERVICE</p><h1>Find your next drive.</h1><p class="hero-copy">A little freedom. A better way to get there.</p></div><div class="hero-note"><span class="note-line">01 / Choose your car</span><span class="note-line">02 / Reserve your dates</span><span class="note-line">03 / Make it yours</span></div></section>
+<section class="search-section" aria-labelledby="search-title">
+  <div class="section-heading"><h2 id="search-title">Find the right fit.</h2><a class="reset-link" href="{% url 'car_list' %}">Clear filters</a></div>
+  <form class="filters" method="get">
+    {% if form.non_field_errors %}<div class="filter-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}<div class="filter-field">{{ field.label_tag }}{{ field }}{% if field.errors %}<div role="alert">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+    <button type="submit" class="search-button">Find cars <span aria-hidden="true">→</span></button>
+  </form>
+  <p class="search-help">Add pickup and return dates to check availability for your trip.</p>
+</section>
+<section aria-labelledby="fleet-title"><div class="fleet-heading"><h2 id="fleet-title">The fleet<span class="fleet-count">{{ cars|length }} vehicle{{ cars|length|pluralize }}</span></h2><p>Everyday essentials. Weekend upgrades.</p></div>
+<div class="grid fleet-grid">{% for car in cars %}
+  <article class="car-card">
+    <a class="car-visual" href="{% url 'car_detail' car.id %}" aria-label="View {{ car }}">{% include 'rentals/car_image.html' %}<span class="badge {% if not car.search_available %}unavailable{% endif %}">{% if car.search_available %}<span class="status-dot"></span>Available{% else %}{% if car.status == 'maintenance' %}Maintenance{% elif car.status == 'reserved' %}Unavailable{% else %}Booked for these dates{% endif %}{% endif %}</span></a>
+    <div class="car-content"><p class="car-category">{{ car.category }} <span>· {{ car.year }}</span></p><h3><a href="{% url 'car_detail' car.id %}">{{ car.make }} {{ car.model }}</a></h3><p class="car-specs">{{ car.seats }} seats <span>·</span> {{ car.transmission }}</p>
+    <div class="car-bottom"><p class="price"><span class="currency">$</span>{{ car.category.daily_rate|floatformat:"-2" }}<span class="price-unit"> / day</span></p><a class="detail-link" href="{% url 'car_detail' car.id %}" aria-label="View details for {{ car }}">View details <span aria-hidden="true">↗</span></a></div></div>
+  </article>
+{% empty %}<section class="empty-state"><h3>No matching cars.</h3><p>Try another date or adjust your filters.</p><a href="{% url 'car_list' %}">View all cars →</a></section>{% endfor %}</div>
+<p class="image-note">Representative vehicle imagery. Without trip dates, availability reflects the car's operational status.</p>
+</section>{% endblock %}
