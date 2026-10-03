@@ -21,3 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('rentals.urls')),
 ]
+
+
+from rentals.media import car_photo
+urlpatterns += [path("media/<path:path>", car_photo, name="car_photo")]
