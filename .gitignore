@@ -1,25 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environment
 .venv/
-venv/
-env/
-
-# Django
-db.sqlite3
-*.log
+__pycache__/
+*.pyc
+*.sqlite3
+media/
 staticfiles/
-
-# macOS
-.DS_Store
-
-# IDE
-.idea/
-.vscode/
-
-# Environment variables / secrets
 .env
-.env.*
